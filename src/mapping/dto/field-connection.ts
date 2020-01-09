@@ -1,8 +1,10 @@
 import { FieldDefinitionBase } from './field-definition';
+import { FieldOfType } from './field-of-type';
 
 export class FieldConnection {
-  firstFieldId: string;
-  secondFieldId: string;
-  firstField: FieldDefinitionBase;
-  secondField: FieldDefinitionBase;
+  id: number;
+  firstFieldId: number;
+  secondFieldId: number;
+  firstField: FieldOfType;
+  secondField: FieldOfType;
 }

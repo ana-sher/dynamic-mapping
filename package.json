@@ -25,11 +25,13 @@
     "@nestjs/graphql": "^6.5.3",
     "@nestjs/platform-express": "^6.7.2",
     "apollo-server-express": "^2.9.14",
+    "basic-ftp": "^4.5.1",
     "graphql": "^14.5.8",
     "graphql-tools": "^4.0.6",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
-    "rxjs": "^6.5.3"
+    "rxjs": "^6.5.3",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",
