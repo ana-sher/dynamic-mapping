@@ -33,28 +33,44 @@ export class MapDataService {
   }
 
   private createTargetObject(sourceObj: any, typeFrom: TypeDefinition, targetType: TypeDefinition,
-                             connections: FieldConnection[], typesDict: TypesDict): any {
+    connections: FieldConnection[], typesDict: TypesDict): any {
     let targetObj: any = {};
-    const fieldsFromWithArrayInPath = this.searchArrayFieldForType(targetType, typeFrom, connections, typesDict);
-    const fieldsToWithArrayInPath = this.searchArrayFieldForType(typeFrom, targetType, connections, typesDict);
-    if (fieldsFromWithArrayInPath.length !== fieldsToWithArrayInPath.length) {
-      const field = this.findNotConnectedToArray(fieldsFromWithArrayInPath, fieldsToWithArrayInPath, connections);
-      const path = this.getPath(field, typeFrom, typesDict);
-      const arrayFields = path.filter(el => el.field.isArray);
-      const arrayField = arrayFields[0];
-      const neededPath = path.slice(0, path.indexOf(arrayField));
-      const objectsToIterate = this.getValue(sourceObj, neededPath);
+    let neededFields: Array<{ from: FieldOfType, to: FieldOfType, pathFrom: FieldOfType[] }> = [];
+    for (const fieldTo of targetType.fields) {
+      const connection = connections.find(el => el.firstFieldId === fieldTo.id || el.secondFieldId === fieldTo.id);
+      if (!connection) {
+        continue;
+      }
+
+      const fieldFrom = connection.firstFieldId === fieldTo.id ? connection.secondField : connection.firstField;
+      const pathFrom = this.getPath(fieldFrom, typeFrom, typesDict);
+      const fromWithArray = pathFrom.findIndex(el => el.field.isArray) !== -1;
+      const toWithArray = this.getPath(fieldTo, targetType, typesDict).findIndex(el => el.field.isArray) !== -1;
+      if (fromWithArray && !toWithArray) {
+        neededFields.push({ from: fieldFrom, to: fieldTo, pathFrom });
+      }
+    }
+    if (neededFields.length > 0) {
+      const neededField = neededFields.sort((a, b) => a.pathFrom.length - b.pathFrom.length)[0];
+      const arrays = neededField.pathFrom.filter(el => el.field.isArray);
+      let arrayType = arrays[arrays.length - 1].typeId;
+      for (const fields of neededFields) {
+        const fieldArrays = fields.pathFrom.filter(el => el.field.isArray);
+        if (fieldArrays[fieldArrays.length - 1].typeId !== arrayType
+          && neededField.pathFrom.findIndex(el => el.typeId === fieldArrays[fieldArrays.length - 1].typeId) === -1) {
+          throw 'Cannot identify type';
+        }
+      }
+
       targetObj = [];
-      for (let i = 0; i < objectsToIterate.length; i++) {
-        const ind = [];
-        ind.push(i);
-        for (const fieldFrom of typesDict[arrayField.field.typeOfFieldId].fields) {
-          const conn = connections.find(el => el.firstFieldId === fieldFrom.id || el.secondFieldId === fieldFrom.id);
-          const fieldTo = conn.firstFieldId === fieldFrom.id ? conn.secondField : conn.firstField;
-          if (field.field.isArray || !this.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
-            targetObj.push(this.mapTypes(fieldTo, typeFrom, sourceObj, connections, typesDict, ind));
-          } else {
-            targetObj.push(this.mapFields(typeFrom, field, fieldTo.field, sourceObj, typesDict));
+      const chains = [];
+      const countsOfCounts = [];
+      for (let i = 0; i < arrays.length; i++) {
+        for (let j = 0; (i === 0 && j < 1) || j < countsOfCounts[i - 1].length; j++) {
+          for (let k = 0; (i === 0 && k < 1) || k < countsOfCounts[i - 1][j].length; k++) {
+            const arrayField = arrays[i];
+            const neededPath = this.getPath(arrayField, typeFrom, typesDict);
+            countsOfCounts[i][j][k] = this.getValue(sourceObj, neededPath, [j, k]);
           }
         }
       }
@@ -70,15 +86,6 @@ export class MapDataService {
     }
 
     return targetObj;
-  }
-
-  private findNotConnectedToArray(fieldsFrom: FieldOfType[], fieldsTo: FieldOfType[], connections: FieldConnection[]): FieldOfType {
-    return fieldsFrom.find(
-      el => fieldsTo.findIndex(f => {
-        const connection = connections.find(c => c.firstFieldId === el.id || c.secondFieldId === el.id);
-        const toField = connection.firstFieldId === el.id ? connection.secondField : connection.firstField;
-        return f.id === toField.id;
-      }) === -1);
   }
 
   private getValue(obj: any, pathFields: FieldOfType[], indexes: number[] = []): any {
@@ -104,37 +111,42 @@ export class MapDataService {
     indexes: number[] = [],
   ): any {
     const resultObj: any = fieldTo.field.isArray ? [] : {};
-    const typeTo = typesDict[fieldTo.typeId];
-    console.log(fieldTo.field.name);
+    const typeTo = typesDict[fieldTo.field.typeOfFieldId];
     if (fieldTo.field.isArray) {
       const fieldsFromWithArrayInPath = this.searchArrayFieldForType(typeTo, typeFrom, connections, typesDict);
       if (fieldsFromWithArrayInPath.length === 0) {
+        const innerObj: any = {};
         for (const field of typeTo.fields) {
           if (field.field.isArray || !this.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
-            resultObj.push(this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes));
+            innerObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes);
           } else {
             const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
             const fieldFrom = connection.firstFieldId === field.id ? connection.secondField : connection.firstField;
-            resultObj.push(this.mapFields(typeFrom, fieldFrom, field.field, objFrom, typesDict));
+            innerObj[field.field.name] = this.mapFields(typeFrom, fieldFrom, field.field, objFrom, typesDict);
           }
         }
+        resultObj.push(innerObj);
       } else {
         const pathFields = this.getPath(fieldsFromWithArrayInPath[0], typeFrom, typesDict);
         const arrayFields = pathFields.filter(el => el.field.isArray);
         const arrayField = arrayFields[indexes.length];
 
-        const neededPath = pathFields.slice(0, pathFields.indexOf(arrayField));
+        const neededPath = pathFields.slice(0, pathFields.indexOf(arrayField) + 1);
         const objectsToIterate = this.getValue(objFrom, neededPath, indexes);
         for (let i = 0; i < objectsToIterate.length; i++) {
           const ind = [...indexes];
           ind.push(i);
-          for (const field of typesDict[arrayField.field.typeOfFieldId].fields) {
+          const innerObj: any = {};
+          for (const field of typesDict[fieldTo.field.typeOfFieldId].fields) {
             if (field.field.isArray || !this.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
-              resultObj.push(this.mapTypes(fieldTo, typeFrom, objFrom, connections, typesDict, ind));
+              innerObj[field.field.name] = this.mapTypes(fieldTo, typeFrom, objFrom, connections, typesDict, ind);
             } else {
-              resultObj.push(this.mapFields(typeFrom, field, fieldTo.field, objFrom, typesDict));
+              const connectionInner = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+              const fieldFromInner = connectionInner.firstFieldId === field.id ? connectionInner.secondField : connectionInner.firstField;
+              innerObj[field.field.name] = this.mapFields(typeFrom, fieldFromInner, field.field, objFrom, typesDict, ind);
             }
           }
+          resultObj.push(innerObj);
         }
       }
     } else {
@@ -158,16 +170,19 @@ export class MapDataService {
   }
 
   private searchArrayFieldForType(typeTo: TypeDefinition,
-                                  typeFrom: TypeDefinition,
-                                  connections: FieldConnection[],
-                                  typesDict: TypesDict): FieldOfType[] {
+    typeFrom: TypeDefinition,
+    connections: FieldConnection[],
+    typesDict: TypesDict): FieldOfType[] {
     const fieldsFrom = typeTo.fields.map(field => {
       const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+      if (!connection) {
+        return;
+      }
       const fieldFrom = connection.firstFieldId === field.id ? connection.secondField : connection.firstField;
       return fieldFrom;
     });
 
-    return fieldsFrom.filter(el => this.getPath(el, typeFrom, typesDict).filter(f => f.field.isArray).length !== 0);
+    return fieldsFrom.filter(el => el && this.getPath(el, typeFrom, typesDict).filter(f => f.field.isArray).length !== 0);
   }
 
   private getPath(field: FieldOfType, type: TypeDefinition, typesDict: TypesDict): FieldOfType[] {
