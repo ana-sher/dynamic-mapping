@@ -8,7 +8,7 @@ export class MapDataController {
     constructor(private readonly mapService: MapDataService) {}
 
     @Post()
-    map(@Body() req: { fromObj: any, connections: FieldConnection[], fromTypeId: number, toTypeId: number, types: TypeDefinition[] }) {
-        return this.mapService.map(req.fromObj, req.connections, req.fromTypeId, req.toTypeId, req.types);
+    map(@Body() req: { objFrom: any, connections: FieldConnection[], typeFromId: number, typeToId: number, types: TypeDefinition[] }) {
+        return this.mapService.map(req.objFrom, req.connections, req.typeFromId, req.typeToId, req.types);
     }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Header } from '@nestjs/common';
 import { JsonReaderService } from '../read-data-services/json-reader/json-reader.service';
 import { XmlReaderService } from '../read-data-services/xml-reader/xml-reader.service';
 import { IReader } from '../read-data-services/reader';
@@ -14,6 +14,7 @@ export class ParseDataController {
         }
 
     @Post()
+    @Header('content-type', 'application/json')
     parse(@Body() req: { data: any, type?: DataType }) {
         if (!req.type) {
             req.type = DataType.Json;
