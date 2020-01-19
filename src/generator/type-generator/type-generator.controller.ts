@@ -6,7 +6,7 @@ export class TypeGeneratorController {
     constructor(private readonly typeGenerator: TypeGeneratorService) {}
 
     @Post()
-    generate(@Body() req: { data: any, name?: string }) {
-        return this.typeGenerator.generateTypes(req.data, req.name);
+    generate(@Body() req: { data: any, name?: string, addDefaultValues?: boolean }) {
+        return this.typeGenerator.generateTypes(req.data, req.name, req.addDefaultValues);
     }
 }

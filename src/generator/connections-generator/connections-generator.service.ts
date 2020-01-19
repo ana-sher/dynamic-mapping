@@ -59,8 +59,7 @@ export class ConnectionsGeneratorService {
                 fieldValue = fieldValue[0];
             }
             if (this.typeHelper.isBasicType(types.find(el => el.id === field.field.typeOfFieldId).name)) {
-                // tslint:disable-next-line: triple-equals
-                if (fieldValue == valueToFind) {
+                if (fieldValue === valueToFind) {
                     return field;
                 }
             } else {

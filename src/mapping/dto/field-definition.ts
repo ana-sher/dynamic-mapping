@@ -1,4 +1,3 @@
-import { TypeDefinition } from './type-definition';
 
 export class FieldDefinitionBase {
   id: number;
@@ -6,4 +5,6 @@ export class FieldDefinitionBase {
   typeOfFieldId: number;
   isArray: boolean;
   isBasicType: boolean;
+  required: boolean;
+  defaultValue: any;
 }

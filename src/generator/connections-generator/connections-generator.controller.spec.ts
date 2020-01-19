@@ -10,7 +10,7 @@ describe('ConnectionsGenerator Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ConnectionsGeneratorController],
-      providers: [ConnectionsGeneratorService, TypeGeneratorService, TypeHelperService]
+      providers: [ConnectionsGeneratorService, TypeGeneratorService, TypeHelperService],
     }).compile();
 
     controller = module.get<ConnectionsGeneratorController>(ConnectionsGeneratorController);

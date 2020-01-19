@@ -11,8 +11,8 @@ export class ConnectionsGeneratorController {
     @Post()
     generate(@Body() req: { objFrom: any, objTo: any, typeFromId?: number, typeToId?: number, types?: TypeDefinition[] }) {
         if (!req.typeFromId || !req.typeToId || !req.types) {
-            const typesFrom = this.typeGenerator.generateTypes(req.objFrom, 'TypeFrom');
-            const typesTo = this.typeGenerator.generateTypes(req.objTo, 'TypeTo');
+            const typesFrom = this.typeGenerator.generateTypes(req.objFrom, 'TypeFrom', true);
+            const typesTo = this.typeGenerator.generateTypes(req.objTo, 'TypeTo', true);
             req.types = this.concatTypes(typesFrom, typesTo);
             req.typeFromId = typesFrom.find(el => el.name === 'TypeFrom').id;
             req.typeToId = typesTo.find(el => el.name === 'TypeTo').id;

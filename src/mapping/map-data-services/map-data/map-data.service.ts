@@ -70,8 +70,17 @@ export class MapDataService {
         targetObj[field.field.name] = this.mapTypes(field, typeFrom, sourceObj, connections, typesDict);
       } else {
         const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+        if (!connection) {
+          if (field.field.defaultValue) {
+            targetObj[field.field.name] = field.field.defaultValue;
+          }
+          continue;
+        }
         const fieldFrom = connection.firstFieldId === field.id ? connection.secondField : connection.firstField;
         targetObj[field.field.name] = this.mapFields(typeFrom, fieldFrom, field.field, sourceObj, typesDict);
+        if ((targetObj[field.field.name] === undefined || targetObj[field.field.name] === null) && field.field.defaultValue) {
+          targetObj[field.field.name] = field.field.defaultValue;
+        }
       }
     }
 
@@ -111,8 +120,17 @@ export class MapDataService {
             innerObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes);
           } else {
             const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+            if (!connection) {
+              if (field.field.defaultValue) {
+                innerObj[field.field.name] = field.field.defaultValue;
+              }
+              continue;
+            }
             const fieldFrom = connection.firstFieldId === field.id ? connection.secondField : connection.firstField;
             innerObj[field.field.name] = this.mapFields(typeFrom, fieldFrom, field.field, objFrom, typesDict);
+            if ((innerObj[field.field.name] === undefined || innerObj[field.field.name] === null) && field.field.defaultValue) {
+              innerObj[field.field.name] = field.field.defaultValue;
+            }
           }
         }
         resultObj.push(innerObj);
@@ -132,8 +150,17 @@ export class MapDataService {
               innerObj[field.field.name] = this.mapTypes(fieldTo, typeFrom, objFrom, connections, typesDict, ind);
             } else {
               const connectionInner = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+              if (!connectionInner) {
+                if (field.field.defaultValue) {
+                  innerObj[field.field.name] = field.field.defaultValue;
+                }
+                continue;
+              }
               const fieldFromInner = connectionInner.firstFieldId === field.id ? connectionInner.secondField : connectionInner.firstField;
               innerObj[field.field.name] = this.mapFields(typeFrom, fieldFromInner, field.field, objFrom, typesDict, ind);
+              if ((innerObj[field.field.name] === undefined || innerObj[field.field.name] === null) && field.field.defaultValue) {
+                innerObj[field.field.name] = field.field.defaultValue;
+              }
             }
           }
           resultObj.push(innerObj);
@@ -145,6 +172,12 @@ export class MapDataService {
           resultObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes);
         } else {
           const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+          if (!connection) {
+            if (field.field.defaultValue) {
+              resultObj[field.field.name] = field.field.defaultValue;
+            }
+            continue;
+          }
           const fieldFrom = connection.firstFieldId === field.id ? connection.secondField : connection.firstField;
           if (this.getPath(fieldFrom, typeFrom, typesDict).filter(el => el.field.isArray).length > indexes.length) {
             const ind = [...indexes];
@@ -152,6 +185,9 @@ export class MapDataService {
             resultObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, ind);
           } else {
             resultObj[field.field.name] = this.mapFields(typeFrom, fieldFrom, field.field, objFrom, typesDict);
+            if ((resultObj[field.field.name] === undefined || resultObj[field.field.name] === null) && field.field.defaultValue) {
+              resultObj[field.field.name] = field.field.defaultValue;
+            }
           }
         }
       }
@@ -184,9 +220,9 @@ export class MapDataService {
       types.push(typesDict[key]);
     }
 
-    let parentType = types.find(el => el.fields.includes(field));
+    let parentType = types.find(el => el.id === field.typeId);
     while (parentType.id !== type.id) {
-      const parentOfParentType = types.find(el => el.fields.findIndex(f => f.field.typeOfFieldId === parentType.id) !== -1);
+      const parentOfParentType = types.filter(el => el.fields).find(el => el.fields.findIndex(f => f.field.typeOfFieldId === parentType.id) !== -1);
       fields.push(parentOfParentType.fields.find(f => f.field.typeOfFieldId === parentType.id));
       parentType = parentOfParentType;
     }

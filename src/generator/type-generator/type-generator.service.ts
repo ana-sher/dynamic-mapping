@@ -8,11 +8,11 @@ import { FieldDefinitionBase } from './../../mapping/dto/field-definition';
 export class TypeGeneratorService {
     constructor(private readonly typeHelper: TypeHelperService) {}
 
-    public generateTypes(data: any, name?: string): TypeDefinition[] {
-        return this.generateType(data, name).types;
+    public generateTypes(data: any, name?: string, addDefaultValues: boolean = false): TypeDefinition[] {
+        return this.generateType(data, name, addDefaultValues).types;
     }
 
-    public generateType(data: any, name?: string, types?: TypeDefinition[]) {
+    public generateType(data: any, name?: string, addDefaultValues: boolean = false, types?: TypeDefinition[]) {
         if (!types) {
             types = this.createBasicTypes();
         }
@@ -37,13 +37,19 @@ export class TypeGeneratorService {
             }
             if (this.typeHelper.isBasicType(typeof data[field])) {
                 newField.isBasicType = true;
+                if (addDefaultValues) {
+                    newField.defaultValue = data[field];
+                }
                 newField.typeOfFieldId = types.find(el => el.name === typeof data[field]).id;
             } else {
                 if (!types.find(el => el.name === field)) {
-                    const innerType = this.generateType(data[field], field, types).type;
+                    const innerType = this.generateType(data[field], field, addDefaultValues, types).type;
                     newField.typeOfFieldId = innerType.id;
                 } else {
                     newField.typeOfFieldId = types.find(el => el.name === field).id;
+                    const generateResult = this.generateType(data[field], field, addDefaultValues, this.createBasicTypes());
+                    types.find(el => el.name === field).fields = this.concatFieldsForType(types.find(el => el.name === field)
+                    .fields, generateResult.type.fields, newField.typeOfFieldId);
                 }
             }
             const newFieldOfType = new FieldOfType();
@@ -56,6 +62,16 @@ export class TypeGeneratorService {
         }
 
         return {type: rootType, types };
+    }
+
+    private concatFieldsForType(fields1: FieldOfType[], fields2: FieldOfType[], typeId: number): FieldOfType[] {
+        fields2 = fields2.filter(el => fields1.findIndex(f => f.field.name === el.field.name) === -1);
+        fields1.push(...fields2);
+
+        fields1.forEach(el => {
+            el.typeId = typeId;
+        });
+        return fields1;
     }
 
     private createBasicTypes(): TypeDefinition[] {
