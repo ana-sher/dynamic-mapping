@@ -8,7 +8,7 @@ import { TypeHelperService } from './../../../helpers/type-helper/type-helper.se
 
 @Injectable()
 export class MapDataService {
-  constructor(private readonly typeHelper: TypeHelperService) {}
+  constructor(private readonly typeHelper: TypeHelperService) { }
 
   public map(fromObj: any, connections: FieldConnection[], fromTypeId: number, toTypeId: number, neededTypes: TypeDefinition[]): object {
     const typesDict: TypesDict = this.typeHelper.arrayToDictionary(
@@ -22,9 +22,9 @@ export class MapDataService {
   }
 
   private createTargetObject(sourceObj: any, typeFrom: TypeDefinition, targetType: TypeDefinition,
-    connections: FieldConnection[], typesDict: TypesDict): any {
+                             connections: FieldConnection[], typesDict: TypesDict): any {
     let targetObj: any = {};
-    let neededFields: Array<{ from: FieldOfType, to: FieldOfType, pathFrom: FieldOfType[] }> = [];
+    const neededFields: Array<{ from: FieldOfType, to: FieldOfType, pathFrom: FieldOfType[] }> = [];
     for (const fieldTo of targetType.fields) {
       const connection = connections.find(el => el.firstFieldId === fieldTo.id || el.secondFieldId === fieldTo.id);
       if (!connection) {
@@ -42,12 +42,12 @@ export class MapDataService {
     if (neededFields.length > 0) {
       const neededField = neededFields.sort((a, b) => a.pathFrom.length - b.pathFrom.length)[0];
       const arrays = neededField.pathFrom.filter(el => el.field.isArray);
-      let arrayType = arrays[arrays.length - 1].typeId;
+      const arrayType = arrays[arrays.length - 1].typeId;
       for (const fields of neededFields) {
         const fieldArrays = fields.pathFrom.filter(el => el.field.isArray);
         if (fieldArrays[fieldArrays.length - 1].typeId !== arrayType
           && neededField.pathFrom.findIndex(el => el.typeId === fieldArrays[fieldArrays.length - 1].typeId) === -1) {
-          throw 'Cannot identify type';
+          throw new Error('Cannot identify type');
         }
       }
 
@@ -160,9 +160,9 @@ export class MapDataService {
   }
 
   private searchArrayFieldForType(typeTo: TypeDefinition,
-    typeFrom: TypeDefinition,
-    connections: FieldConnection[],
-    typesDict: TypesDict): FieldOfType[] {
+                                  typeFrom: TypeDefinition,
+                                  connections: FieldConnection[],
+                                  typesDict: TypesDict): FieldOfType[] {
     const fieldsFrom = typeTo.fields.map(field => {
       const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
       if (!connection) {
@@ -202,7 +202,6 @@ export class MapDataService {
     typesDict: TypesDict,
     indexes: number[] = [],
   ): any {
-    console.log(fieldFrom.field.name + ' => ' + fieldTo.name);
     const type = typesDict[fieldTo.typeOfFieldId];
     if (this.typeHelper.isBasicType(type.name) && this.typeHelper.isBasicType(typesDict[fieldFrom.field.typeOfFieldId].name)) {
       return this.typeHelper.convertValue(type.name, this.getValue(objFrom, this.getPath(fieldFrom, typeFrom, typesDict), indexes));

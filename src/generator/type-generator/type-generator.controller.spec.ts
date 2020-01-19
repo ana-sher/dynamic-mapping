@@ -9,7 +9,7 @@ describe('TypeGenerator Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TypeGeneratorController],
-      providers: [TypeGeneratorService, TypeHelperService]
+      providers: [TypeGeneratorService, TypeHelperService],
     }).compile();
 
     controller = module.get<TypeGeneratorController>(TypeGeneratorController);

@@ -19,7 +19,7 @@ export class TypeGeneratorService {
         const rootType = new TypeDefinition();
         rootType.name = name || 'Root';
         rootType.fields = new Array<FieldOfType>();
-        rootType.id = 3 + Math.round(Math.random() * 10000);
+        rootType.id = 3 + Math.round(Math.random() * 10000000);
         types.push(rootType);
         // tslint:disable-next-line: forin
         for (const field in data) {
@@ -47,7 +47,7 @@ export class TypeGeneratorService {
                 }
             }
             const newFieldOfType = new FieldOfType();
-            newFieldOfType.id = Math.round(Math.random() * 10000);
+            newFieldOfType.id = Math.round(Math.random() * 10000000);
             newField.id = newFieldOfType.id;
             newFieldOfType.typeId = rootType.id;
             newFieldOfType.fieldId = newField.id;

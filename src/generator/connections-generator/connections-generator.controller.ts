@@ -30,7 +30,7 @@ export class ConnectionsGeneratorController {
         const repeatedTypes = typesFrom.filter(el => typesTo.findIndex(c => c.id === el.id) !== -1);
         for (const repeatedType of repeatedTypes) {
             const oldId = repeatedType.id;
-            repeatedType.id = Math.round(Math.random() * 10000);
+            repeatedType.id = Math.round(Math.random() * 10000000);
             repeatedType.fields.forEach(el => el.typeId = repeatedType.id);
             typesFrom.forEach(el => {
                 el.fields.forEach(f => {
@@ -50,7 +50,7 @@ export class ConnectionsGeneratorController {
         });
         const repeatedFields = fromFields.filter(el => toFields.findIndex(c => c.id === el.id) !== -1);
         for (const repeatedField of repeatedFields) {
-            repeatedField.id = Math.round(Math.random() * 10000);
+            repeatedField.id = Math.round(Math.random() * 10000000);
             repeatedField.fieldId = repeatedField.id;
             repeatedField.field.id = repeatedField.id;
         }

@@ -14,7 +14,7 @@ export class ConnectionsGeneratorService {
 
     private iterateThroughFields(objFrom: any, objTo: any, typeFromId: number, typeToId: number, types: TypeDefinition[]): FieldConnection[] {
         const typeTo = types.find(el => el.id === typeToId);
-        let connections = [];
+        const connections = [];
         for (const field of typeTo.fields) {
             let fieldValue = objTo[field.field.name];
             if (fieldValue === undefined || fieldValue === null) {
@@ -27,15 +27,18 @@ export class ConnectionsGeneratorService {
                 const connectionField = this.findConnection(fieldValue, objFrom, typeFromId, types);
                 if (connectionField) {
                     const connection = new FieldConnection();
-                    connection.id = Math.round(Math.random() * 10000);
+                    connection.id = Math.round(Math.random() * 10000000);
                     connection.firstFieldId = field.id;
                     connection.firstField = field;
                     connection.secondFieldId = connectionField.id;
                     connection.secondField = connectionField;
-                    connections.push(connection);
+                    if (connections.findIndex(el => el.firstFieldId === connection.firstFieldId) === -1) {
+                        connections.push(connection);
+                    }
                 }
             } else {
-                const innerConnections = this.iterateThroughFields(objFrom, fieldValue, typeFromId, field.field.typeOfFieldId, types);
+                const innerConnections = this.iterateThroughFields(objFrom, fieldValue, typeFromId, field.field.typeOfFieldId, types)
+                                        .filter(connection => connections.findIndex(el => el.firstFieldId === connection.firstFieldId) === -1);
                 if (innerConnections) {
                     connections.push(...innerConnections);
                 }
