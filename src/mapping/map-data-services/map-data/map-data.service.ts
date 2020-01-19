@@ -1,28 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { FieldConnection } from 'src/mapping/dto/field-connection';
-import { FieldOfType } from 'src/mapping/dto/field-of-type';
-import { TypeDefinition } from 'src/mapping/dto/type-definition';
-import { TypesDict } from 'src/mapping/dto/types-dict';
-import { FieldDefinitionBase } from 'src/mapping/dto/field-definition';
+import { FieldConnection } from './../../dto/field-connection';
+import { FieldOfType } from './../../dto/field-of-type';
+import { TypeDefinition } from './../../dto/type-definition';
+import { TypesDict } from './../../dto/types-dict';
+import { FieldDefinitionBase } from './../../dto/field-definition';
+import { TypeHelperService } from './../../../helpers/type-helper/type-helper.service';
 
 @Injectable()
 export class MapDataService {
-  private readonly basicTypes: string[];
-  private readonly basicTypeConvertions: {
-    [key: string]: (val: string) => any;
-  };
-
-  constructor() {
-    this.basicTypes = ['string', 'number', 'boolean'];
-    this.basicTypeConvertions = {
-      string: val => val,
-      number: val => Number(val),
-      boolean: val => Boolean(val),
-    };
-  }
+  constructor(private readonly typeHelper: TypeHelperService) {}
 
   public map(fromObj: any, connections: FieldConnection[], fromTypeId: number, toTypeId: number, neededTypes: TypeDefinition[]): object {
-    const typesDict: TypesDict = this.normalizeArray(
+    const typesDict: TypesDict = this.typeHelper.arrayToDictionary(
       neededTypes,
       'id',
     );
@@ -64,19 +53,20 @@ export class MapDataService {
 
       targetObj = [];
       const chains = [];
-      const countsOfCounts = [];
+      const countsOfCounts = [[[]]];
       for (let i = 0; i < arrays.length; i++) {
-        for (let j = 0; (i === 0 && j < 1) || j < countsOfCounts[i - 1].length; j++) {
-          for (let k = 0; (i === 0 && k < 1) || k < countsOfCounts[i - 1][j].length; k++) {
+        for (let j = 0; (i === 0 && j === 0) || (countsOfCounts[i - 1] && j < countsOfCounts[i - 1].length); j++) {
+          for (let k = 0; (i === 0 && j === 0 && k === 0) || (countsOfCounts[i - 1] &&
+            countsOfCounts[i - 1][j] && k < countsOfCounts[i - 1][j].length); k++) {
             const arrayField = arrays[i];
             const neededPath = this.getPath(arrayField, typeFrom, typesDict);
-            countsOfCounts[i][j][k] = this.getValue(sourceObj, neededPath, [j, k]);
+            countsOfCounts[i][j][k] = this.getValue(sourceObj, neededPath, [j, k]).length;
           }
         }
       }
     }
     for (const field of targetType.fields) {
-      if (field.field.isArray || !this.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
+      if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
         targetObj[field.field.name] = this.mapTypes(field, typeFrom, sourceObj, connections, typesDict);
       } else {
         const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
@@ -117,7 +107,7 @@ export class MapDataService {
       if (fieldsFromWithArrayInPath.length === 0) {
         const innerObj: any = {};
         for (const field of typeTo.fields) {
-          if (field.field.isArray || !this.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
+          if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
             innerObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes);
           } else {
             const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
@@ -138,7 +128,7 @@ export class MapDataService {
           ind.push(i);
           const innerObj: any = {};
           for (const field of typesDict[fieldTo.field.typeOfFieldId].fields) {
-            if (field.field.isArray || !this.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
+            if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
               innerObj[field.field.name] = this.mapTypes(fieldTo, typeFrom, objFrom, connections, typesDict, ind);
             } else {
               const connectionInner = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
@@ -151,7 +141,7 @@ export class MapDataService {
       }
     } else {
       for (const field of typeTo.fields) {
-        if (field.field.isArray || !this.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
+        if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
           resultObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes);
         } else {
           const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
@@ -214,23 +204,10 @@ export class MapDataService {
   ): any {
     console.log(fieldFrom.field.name + ' => ' + fieldTo.name);
     const type = typesDict[fieldTo.typeOfFieldId];
-    if (this.isBasicType(type.name) && this.isBasicType(typesDict[fieldFrom.field.typeOfFieldId].name)) {
-      return this.basicTypeConvertions[type.name](this.getValue(objFrom, this.getPath(fieldFrom, typeFrom, typesDict), indexes));
+    if (this.typeHelper.isBasicType(type.name) && this.typeHelper.isBasicType(typesDict[fieldFrom.field.typeOfFieldId].name)) {
+      return this.typeHelper.convertValue(type.name, this.getValue(objFrom, this.getPath(fieldFrom, typeFrom, typesDict), indexes));
     }
 
     return undefined;
-  }
-
-  private isBasicType(type: string): boolean {
-    return this.basicTypes.includes(type);
-  }
-
-  private normalizeArray<T>(array: T[], indexKey: keyof T) {
-    const normalizedObject: any = {};
-    for (const el of array) {
-      const key = el[indexKey];
-      normalizedObject[key] = el;
-    }
-    return normalizedObject as { [key: string]: T };
   }
 }

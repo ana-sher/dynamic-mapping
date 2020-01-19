@@ -13,7 +13,7 @@ enum TranspherType {
   API,
 }
 
-enum DataType {
+export enum DataType {
   Json,
   Xml,
 }
