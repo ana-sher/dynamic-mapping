@@ -7,4 +7,6 @@ export class FieldConnection {
   secondFieldId: number;
   firstField: FieldOfType;
   secondField: FieldOfType;
+  firstFieldFilterFunction: string;
+  secondFieldFilterFunction: string;
 }

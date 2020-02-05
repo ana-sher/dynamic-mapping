@@ -15,18 +15,17 @@ export class MapDataService {
       neededTypes,
       'id',
     );
-
-    const obj = this.createTargetObject(fromObj, typesDict[fromTypeId], typesDict[toTypeId], connections, typesDict);
-
-    return obj;
+    return this.createTargetObject(fromObj, typesDict[fromTypeId], typesDict[toTypeId], connections, typesDict);
   }
 
   private createTargetObject(sourceObj: any, typeFrom: TypeDefinition, targetType: TypeDefinition,
                              connections: FieldConnection[], typesDict: TypesDict): any {
     let targetObj: any = {};
     const neededFields: Array<{ from: FieldOfType, to: FieldOfType, pathFrom: FieldOfType[] }> = [];
+
+    // searching for fields, that are connected to root with arrays from source
     for (const fieldTo of targetType.fields) {
-      const connection = connections.find(el => el.firstFieldId === fieldTo.id || el.secondFieldId === fieldTo.id);
+      const connection = this.findConnection(connections, fieldTo);;
       if (!connection) {
         continue;
       }
@@ -40,6 +39,8 @@ export class MapDataService {
       }
     }
     if (neededFields.length > 0) {
+      // TODO: implement creating multiple objects in case of connections in root with arrays from source
+
       const neededField = neededFields.sort((a, b) => a.pathFrom.length - b.pathFrom.length)[0];
       const arrays = neededField.pathFrom.filter(el => el.field.isArray);
       const arrayType = arrays[arrays.length - 1].typeId;
@@ -65,11 +66,13 @@ export class MapDataService {
         }
       }
     }
+
+    // basic processing for most cases to return single object
     for (const field of targetType.fields) {
       if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
         targetObj[field.field.name] = this.mapTypes(field, typeFrom, sourceObj, connections, typesDict);
       } else {
-        const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+        const connection = this.findConnection(connections, field);
         if (!connection) {
           if (field.field.defaultValue) {
             targetObj[field.field.name] = field.field.defaultValue;
@@ -111,15 +114,20 @@ export class MapDataService {
   ): any {
     const resultObj: any = fieldTo.field.isArray ? [] : {};
     const typeTo = typesDict[fieldTo.field.typeOfFieldId];
+
+    // if target field is array
     if (fieldTo.field.isArray) {
       const fieldsFromWithArrayInPath = this.searchArrayFieldForType(typeTo, typeFrom, connections, typesDict);
+
       if (fieldsFromWithArrayInPath.length === 0) {
+        // if source field path doesn't contain arrays then we add only one object
+
         const innerObj: any = {};
         for (const field of typeTo.fields) {
           if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
             innerObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes);
           } else {
-            const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+            const connection = this.findConnection(connections, field);
             if (!connection) {
               if (field.field.defaultValue) {
                 innerObj[field.field.name] = field.field.defaultValue;
@@ -135,6 +143,9 @@ export class MapDataService {
         }
         resultObj.push(innerObj);
       } else {
+        // if source field path contains arrays we should iterate through all of this objects and add all the most inners
+        // (they could have some field connections with upper, so we should pass indexes to paths)
+
         const pathFields = this.getPath(fieldsFromWithArrayInPath[0], typeFrom, typesDict);
         const arrayFields = pathFields.filter(el => el.field.isArray);
         const arrayField = arrayFields[indexes.length];
@@ -149,7 +160,7 @@ export class MapDataService {
             if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
               innerObj[field.field.name] = this.mapTypes(fieldTo, typeFrom, objFrom, connections, typesDict, ind);
             } else {
-              const connectionInner = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+              const connectionInner = this.findConnection(connections, field);
               if (!connectionInner) {
                 if (field.field.defaultValue) {
                   innerObj[field.field.name] = field.field.defaultValue;
@@ -167,11 +178,13 @@ export class MapDataService {
         }
       }
     } else {
+      // if target field is not array
+
       for (const field of typeTo.fields) {
         if (field.field.isArray || !this.typeHelper.isBasicType(typesDict[field.field.typeOfFieldId].name)) {
           resultObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, indexes);
         } else {
-          const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+          const connection = this.findConnection(connections, field);
           if (!connection) {
             if (field.field.defaultValue) {
               resultObj[field.field.name] = field.field.defaultValue;
@@ -181,7 +194,17 @@ export class MapDataService {
           const fieldFrom = connection.firstFieldId === field.id ? connection.secondField : connection.firstField;
           if (this.getPath(fieldFrom, typeFrom, typesDict).filter(el => el.field.isArray).length > indexes.length) {
             const ind = [...indexes];
-            ind.push(0);
+
+            // filtering function in case of source field is array
+            const neededFunction = connection.firstFieldId === fieldFrom.id ? connection.firstFieldFilterFunction : connection.secondFieldFilterFunction;
+            if(neededFunction) {
+              const objectsToIterate = this.getValue(objFrom, this.getPath(fieldFrom, typeFrom, typesDict), indexes);
+              const neededObject = new Function('array', neededFunction)(objectsToIterate);
+              ind.push(objectsToIterate.indexOf(neededObject));
+            } else {
+              ind.push(0);
+            }
+
             resultObj[field.field.name] = this.mapTypes(field, typeFrom, objFrom, connections, typesDict, ind);
           } else {
             resultObj[field.field.name] = this.mapFields(typeFrom, fieldFrom, field.field, objFrom, typesDict);
@@ -200,7 +223,7 @@ export class MapDataService {
                                   connections: FieldConnection[],
                                   typesDict: TypesDict): FieldOfType[] {
     const fieldsFrom = typeTo.fields.map(field => {
-      const connection = connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
+      const connection = this.findConnection(connections, field);
       if (!connection) {
         return;
       }
@@ -228,6 +251,10 @@ export class MapDataService {
     }
 
     return fields.reverse();
+  }
+
+  private findConnection(connections: FieldConnection[], field: FieldOfType) {
+    return connections.find(el => el.firstFieldId === field.id || el.secondFieldId === field.id);
   }
 
   private mapFields(
