@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { TypeHelperService } from './../../helpers/type-helper/type-helper.service';
 import { TypeDefinition } from './../../mapping/dto/type-definition';
-import { FieldOfType } from './../../mapping/dto/field-of-type';
-import { FieldDefinitionBase } from './../../mapping/dto/field-definition';
+import { FieldDefinition } from './../../mapping/dto/field-definition';
 
 @Injectable()
 export class TypeGeneratorService {
     constructor(private readonly typeHelper: TypeHelperService) {}
 
-    public generateTypes(data: any, name?: string, addDefaultValues: boolean = false): TypeDefinition[] {
-        return this.generateType(data, name, addDefaultValues).types;
+    public generateTypes(data: any, name?: string, addDefaultValues: boolean = false, types?: TypeDefinition[]): TypeDefinition[] {
+        return this.generateType(data, name, addDefaultValues, types).types;
     }
 
     public generateType(data: any, name?: string, addDefaultValues: boolean = false, types?: TypeDefinition[]) {
@@ -18,12 +17,12 @@ export class TypeGeneratorService {
         }
         const rootType = new TypeDefinition();
         rootType.name = name || 'Root';
-        rootType.fields = new Array<FieldOfType>();
+        rootType.fields = new Array<FieldDefinition>();
         rootType.id = 3 + Math.round(Math.random() * 10000000);
         types.push(rootType);
         // tslint:disable-next-line: forin
         for (const field in data) {
-            const newField = new FieldDefinitionBase();
+            const newField = new FieldDefinition();
             newField.name = field;
             if (data[field] === undefined || data[field] === null) {
                 continue;
@@ -52,20 +51,16 @@ export class TypeGeneratorService {
                     .fields, generateResult.type.fields, newField.typeOfFieldId);
                 }
             }
-            const newFieldOfType = new FieldOfType();
-            newFieldOfType.id = Math.round(Math.random() * 10000000);
-            newField.id = newFieldOfType.id;
-            newFieldOfType.typeId = rootType.id;
-            newFieldOfType.fieldId = newField.id;
-            newFieldOfType.field = newField;
-            rootType.fields.push(newFieldOfType);
+            newField.id = Math.round(Math.random() * 10000000);
+            newField.typeId = rootType.id;
+            rootType.fields.push(newField);
         }
 
         return {type: rootType, types };
     }
 
-    private concatFieldsForType(fields1: FieldOfType[], fields2: FieldOfType[], typeId: number): FieldOfType[] {
-        fields2 = fields2.filter(el => fields1.findIndex(f => f.field.name === el.field.name) === -1);
+    private concatFieldsForType(fields1: FieldDefinition[], fields2: FieldDefinition[], typeId: number): FieldDefinition[] {
+        fields2 = fields2.filter(el => fields1.findIndex(f => f.name === el.name) === -1);
         fields1.push(...fields2);
 
         fields1.forEach(el => {

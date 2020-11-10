@@ -6,7 +6,7 @@ import { TypeGeneratorService } from '../type-generator/type-generator.service';
 @Controller('connections-generator')
 export class ConnectionsGeneratorController {
     constructor(private readonly connectionsGenerator: ConnectionsGeneratorService,
-        private readonly typeGenerator: TypeGeneratorService) { }
+                private readonly typeGenerator: TypeGeneratorService) { }
 
     @Post()
     generate(@Body() req: { objFrom: any, objTo: any, typeFromId?: number, typeToId?: number, types?: TypeDefinition[] }) {
@@ -34,8 +34,8 @@ export class ConnectionsGeneratorController {
             repeatedType.fields.forEach(el => el.typeId = repeatedType.id);
             typesFrom.forEach(el => {
                 el.fields.forEach(f => {
-                    if (f.field.typeOfFieldId === oldId) {
-                        f.field.typeOfFieldId = repeatedType.id;
+                    if (f.typeOfFieldId === oldId) {
+                        f.typeOfFieldId = repeatedType.id;
                     }
                 });
             });
@@ -53,8 +53,7 @@ export class ConnectionsGeneratorController {
             const actualField = typesFrom.map(el => el.fields).filter(el => el)
                 .find(el => el.findIndex(f => f.id === repeatedField.id) !== -1).find(f => f.id === repeatedField.id);
             actualField.id = Math.round(Math.random() * 10000000);
-            actualField.fieldId = actualField.id;
-            actualField.field.id = actualField.id;
+            actualField.id = actualField.id;
         }
         typesFrom.push(...typesTo);
         return typesFrom;

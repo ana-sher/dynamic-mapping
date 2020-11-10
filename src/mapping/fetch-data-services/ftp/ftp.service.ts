@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IFetcher } from '../fetcher';
-import { FetchType, Action } from 'src/mapping/dto/fetch-type';
+import { FetchType, Action } from '../../dto/fetch-type';
 import { Observable, from } from 'rxjs';
 import { Client, AccessOptions } from 'basic-ftp';
-import { HeaderField } from 'src/mapping/dto/header-field';
+import { FetchSimpleField } from '../../dto/header-field';
 import { Writable, Transform, Readable } from 'stream';
 
 @Injectable()
@@ -11,11 +11,11 @@ export class FtpService implements IFetcher {
     private readonly actionsDictionary: {
         [key: string]: (client: Client, name: string, directory?: string, data?: any) => Promise<any>,
     } = {
-            [Action.Get]: this.get,
-            [Action.GetByIdentifier]: this.getByName,
-            [Action.Create]: this.uploadFile,
-            [Action.Update]: this.updateFile,
-            [Action.Remove]: this.removeFile,
+            [Action.Get]: (...args) => this.get(...args),
+            [Action.GetByIdentifier]: (...args) => this.getByName(...args),
+            [Action.Create]: (...args) => this.uploadFile(...args),
+            [Action.Update]: (...args) => this.updateFile(...args),
+            [Action.Remove]: (...args) => this.removeFile(...args),
         };
 
     public doRequest(fetchType: FetchType, fethData: any = {}): Observable<any> {
@@ -24,8 +24,9 @@ export class FtpService implements IFetcher {
 
     private async processRequest(fetchType: FetchType, fethData: any = {}): Promise<any> {
         const client = await this.connect(fetchType.headerParams);
-        const name = fetchType.queryParams.find(el => el.field.name === 'name').value;
-        await this.actionsDictionary[fetchType.action](client, name, fetchType.path, fethData);
+        const name = fetchType.queryParams.find(el => el.name === 'name')?.value;
+        const directory = fetchType.queryParams.find(el => el.name === 'directory')?.value;
+        await this.actionsDictionary[fetchType.action](client, name, directory, fethData);
         client.close();
     }
 
@@ -63,7 +64,7 @@ export class FtpService implements IFetcher {
         fileStream.push(null);
         let path = directory || '';
         path += name;
-        return client.uploadFrom(name, path);
+        return client.uploadFrom(fileStream, path);
     }
 
     private async updateFile(client: Client, name: string, directory?: string, data?: any): Promise<any> {
@@ -98,17 +99,18 @@ export class FtpService implements IFetcher {
         });
     }
 
-    private async connect(headers: HeaderField[]): Promise<Client> {
+    private async connect(headers: FetchSimpleField[]): Promise<Client> {
         const client = new Client();
         await client.access(this.getOptions(headers));
         return client;
     }
 
-    private getOptions(headers: HeaderField[]): AccessOptions {
+    private getOptions(headers: FetchSimpleField[]): AccessOptions {
 
         return headers.reduce((prev, curr, i) => {
             prev[curr.name] = curr.value;
             if (curr.name === 'port') {
+                // tslint:disable-next-line: radix
                 prev[curr.name] = parseInt(curr.value);
             }
             return prev;

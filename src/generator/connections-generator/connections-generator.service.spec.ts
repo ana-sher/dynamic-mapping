@@ -38,22 +38,16 @@ describe('ConnectionsGeneratorService', () => {
           {
             id: 1,
             typeId: 1,
-            fieldId: 1,
-            field: {
-              id: 1,
-              name: 'F1',
-              typeOfFieldId: 10,
-            },
+            name: 'F1',
+            typeOfFieldId: 10,
           },
           {
             id: 2,
             typeId: 1,
-            fieldId: 2,
-            field: {
-              id: 2,
-              name: 'F2',
-              typeOfFieldId: 10,
-            },
+
+            name: 'F2',
+            typeOfFieldId: 10,
+
           },
         ],
       } as TypeDefinition;
@@ -65,22 +59,18 @@ describe('ConnectionsGeneratorService', () => {
           {
             id: 8,
             typeId: 2,
-            fieldId: 8,
-            field: {
-              id: 8,
-              name: 'F8',
-              typeOfFieldId: 10,
-            },
+
+            name: 'F8',
+            typeOfFieldId: 10,
+
           },
           {
             id: 5,
             typeId: 2,
-            fieldId: 5,
-            field: {
-              id: 5,
-              name: 'F5',
-              typeOfFieldId: 10,
-            },
+
+            name: 'F5',
+            typeOfFieldId: 10,
+
           },
         ],
       } as TypeDefinition;
@@ -92,14 +82,14 @@ describe('ConnectionsGeneratorService', () => {
       const connections: FieldConnection[] = [
         {
           firstFieldId: 8,
-          firstField: T2.fields.find(el => el.fieldId === 8),
-          secondField: T1.fields.find(el => el.fieldId === 1),
+          firstField: T2.fields.find(el => el.id === 8),
+          secondField: T1.fields.find(el => el.id === 1),
           secondFieldId: 1,
         } as FieldConnection,
         {
           firstFieldId: 5,
-          firstField: T2.fields.find(el => el.fieldId === 5),
-          secondField: T1.fields.find(el => el.fieldId === 2),
+          firstField: T2.fields.find(el => el.id === 5),
+          secondField: T1.fields.find(el => el.id === 2),
           secondFieldId: 2,
         } as FieldConnection,
       ];
@@ -132,23 +122,19 @@ describe('ConnectionsGeneratorService', () => {
           {
             id: 1,
             typeId: 1,
-            fieldId: 1,
-            field: {
-              id: 1,
-              name: 'F1',
-              typeOfFieldId: 10,
-            },
+
+            name: 'F1',
+            typeOfFieldId: 10,
+
           },
           {
             id: 3,
             typeId: 1,
-            fieldId: 3,
-            field: {
-              id: 3,
-              name: 'F3',
-              typeOfFieldId: 3,
-              isArray: true,
-            },
+
+            name: 'F3',
+            typeOfFieldId: 3,
+            isArray: true,
+
           },
         ],
       } as TypeDefinition;
@@ -160,23 +146,19 @@ describe('ConnectionsGeneratorService', () => {
           {
             id: 8,
             typeId: 2,
-            fieldId: 8,
-            field: {
-              id: 8,
-              name: 'F8',
-              typeOfFieldId: 10,
-            },
+
+            name: 'F8',
+            typeOfFieldId: 10,
+
           },
           {
             id: 9,
             typeId: 2,
-            fieldId: 9,
-            field: {
-              id: 9,
-              name: 'F9',
-              typeOfFieldId: 4,
-              isArray: true,
-            },
+
+            name: 'F9',
+            typeOfFieldId: 4,
+            isArray: true,
+
           },
         ],
       } as TypeDefinition;
@@ -188,12 +170,10 @@ describe('ConnectionsGeneratorService', () => {
           {
             id: 2,
             typeId: 3,
-            fieldId: 2,
-            field: {
-              id: 2,
-              name: 'F2',
-              typeOfFieldId: 10,
-            },
+
+            name: 'F2',
+            typeOfFieldId: 10,
+
           }],
       } as TypeDefinition;
 
@@ -204,12 +184,10 @@ describe('ConnectionsGeneratorService', () => {
           {
             id: 5,
             typeId: 4,
-            fieldId: 5,
-            field: {
-              id: 5,
-              name: 'F5',
-              typeOfFieldId: 10,
-            },
+
+            name: 'F5',
+            typeOfFieldId: 10,
+
           }],
       } as TypeDefinition;
 
@@ -222,14 +200,14 @@ describe('ConnectionsGeneratorService', () => {
       const connections: FieldConnection[] = [
         {
           firstFieldId: 8,
-          firstField: T2.fields.find(el => el.fieldId === 8),
-          secondField: T1.fields.find(el => el.fieldId === 1),
+          firstField: T2.fields.find(el => el.id === 8),
+          secondField: T1.fields.find(el => el.id === 1),
           secondFieldId: 1,
         } as FieldConnection,
         {
           firstFieldId: 5,
-          firstField: T4.fields.find(el => el.fieldId === 5),
-          secondField: T3.fields.find(el => el.fieldId === 2),
+          firstField: T4.fields.find(el => el.id === 5),
+          secondField: T3.fields.find(el => el.id === 2),
           secondFieldId: 2,
         } as FieldConnection,
       ];

@@ -1,8 +1,7 @@
 import { TypeGeneratorService } from './type-generator.service';
 import { TypeDefinition } from './../../mapping/dto/type-definition';
 import { TypeHelperService } from './../../helpers/type-helper/type-helper.service';
-import { FieldOfType } from './../../mapping/dto/field-of-type';
-import { FieldDefinitionBase } from './../../mapping/dto/field-definition';
+import { FieldDefinition } from './../../mapping/dto/field-definition';
 
 describe('TypeGeneratorService', () => {
   let service: TypeGeneratorService;
@@ -41,26 +40,20 @@ describe('TypeGeneratorService', () => {
         name: 'T1',
         fields: [
           {
-            field: {
               name: 'F1',
               isBasicType: true,
               typeOfFieldId: 1,
-            } as FieldDefinitionBase,
           },
           {
-            field: {
               name: 'F2',
               isBasicType: true,
               typeOfFieldId: 1,
-            } as FieldDefinitionBase,
           },
           {
-            field: {
               name: 'F3',
               isArray: true,
-            } as FieldDefinitionBase,
           },
-        ] as FieldOfType[],
+        ] as FieldDefinition[],
       });
 
       const T3 = new TypeDefinition();
@@ -68,21 +61,19 @@ describe('TypeGeneratorService', () => {
         name: 'F3',
         fields: [
           {
-            field: {
               name: 'F4',
               isBasicType: true,
               typeOfFieldId: 1,
-            },
           },
-        ] as FieldOfType[],
+        ] as FieldDefinition[],
       });
 
       const actual = service.generateTypes(objFrom, 'T1');
 
       actual.forEach(el => {
-        el.fields = el.fields?.map(k => ( {field:
-          {typeOfFieldId: k.field.typeOfFieldId < 4 ? k.field.typeOfFieldId : undefined,
-            name: k.field.name, isBasicType: k.field.isBasicType, isArray: k.field.isArray} } as FieldOfType));
+        el.fields = el.fields?.map(k => (
+          {typeOfFieldId: k.typeOfFieldId < 4 ? k.typeOfFieldId : undefined,
+            name: k.name, isBasicType: k.isBasicType, isArray: k.isArray} as FieldDefinition));
       });
 
       actual.forEach(el => {

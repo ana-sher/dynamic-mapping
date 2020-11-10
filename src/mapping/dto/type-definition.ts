@@ -1,11 +1,10 @@
-import { FieldDefinitionBase } from './field-definition';
 import { SystemBase } from './system-base';
-import { FieldOfType } from './field-of-type';
+import { FieldDefinition } from './field-definition';
 
 export class TypeDefinition {
   id: number;
   name: string;
-  fields: FieldOfType[];
-  systemId: number;
-  system: SystemBase;
+  fields: FieldDefinition[];
+  systemId?: number;
+  system?: SystemBase;
 }

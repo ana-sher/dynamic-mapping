@@ -1,6 +1,6 @@
 import { FetchType } from './fetch-type';
 
-export class HeaderField {
+export class FetchSimpleField {
     id: string;
     fetchTypeId: string;
     fetchType: FetchType;

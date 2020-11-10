@@ -1,8 +1,10 @@
-import { FieldDefinitionBase } from './field-definition';
+import { FieldDefinition } from './field-definition';
+import { ConnectionFieldDefinition } from './connection-field-definition';
 
 export class ConnectionValue {
-  id: string;
-  fieldId: string;
-  field: FieldDefinitionBase;
-  value: any;
+  id: number;
+  value: string;
+  connectionFieldId: number;
+  connectionField: ConnectionFieldDefinition;
+  integrationId: number;
 }

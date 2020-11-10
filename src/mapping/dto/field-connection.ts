@@ -1,12 +1,11 @@
-import { FieldDefinitionBase } from './field-definition';
-import { FieldOfType } from './field-of-type';
+import { FieldDefinition } from './field-definition';
 
 export class FieldConnection {
   id: number;
-  firstFieldId: number;
-  secondFieldId: number;
-  firstField: FieldOfType;
-  secondField: FieldOfType;
-  firstFieldFilterFunction: string;
-  secondFieldFilterFunction: string;
+  firstFieldId?: number;
+  secondFieldId?: number;
+  firstField?: FieldDefinition;
+  secondField?: FieldDefinition;
+  firstFieldFilterFunction?: string;
+  secondFieldFilterFunction?: string;
 }

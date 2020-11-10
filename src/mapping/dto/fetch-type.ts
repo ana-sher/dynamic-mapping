@@ -1,6 +1,6 @@
 import { FetchField } from './fetch-field';
 import { TypeDefinition } from './type-definition';
-import { HeaderField } from './header-field';
+import { FetchSimpleField } from './header-field';
 
 export class FetchType {
   id: string;
@@ -9,8 +9,8 @@ export class FetchType {
   path: string;
   pathEndingPath: string;
   action: Action;
-  queryParams: FetchField[];
-  headerParams: HeaderField[];
+  queryParams: FetchSimpleField[];
+  headerParams: FetchSimpleField[];
 }
 
 export enum Action {

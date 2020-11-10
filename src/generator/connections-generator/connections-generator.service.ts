@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { TypeDefinition } from './../../mapping/dto/type-definition';
 import { FieldConnection } from './../../mapping/dto/field-connection';
-import { FieldOfType } from './../../mapping/dto/field-of-type';
 import { TypeHelperService } from './../../helpers/type-helper/type-helper.service';
+import { FieldDefinition } from '../../mapping/dto/field-definition';
 
 @Injectable()
 export class ConnectionsGeneratorService {
@@ -16,14 +16,14 @@ export class ConnectionsGeneratorService {
         const typeTo = types.find(el => el.id === typeToId);
         const connections = [];
         for (const field of typeTo.fields) {
-            let fieldValue = objTo[field.field.name];
+            let fieldValue = objTo[field.name];
             if (fieldValue === undefined || fieldValue === null) {
                 continue;
             }
-            if (field.field.isArray && fieldValue.length > 0) {
+            if (field.isArray && fieldValue.length > 0) {
                 fieldValue = fieldValue[0];
             }
-            if (this.typeHelper.isBasicType(types.find(el => el.id === field.field.typeOfFieldId).name)) {
+            if (this.typeHelper.isBasicType(types.find(el => el.id === field.typeOfFieldId).name)) {
                 const connectionField = this.findConnection(fieldValue, objFrom, typeFromId, types);
                 if (connectionField) {
                     const connection = new FieldConnection();
@@ -37,7 +37,7 @@ export class ConnectionsGeneratorService {
                     }
                 }
             } else {
-                const innerConnections = this.iterateThroughFields(objFrom, fieldValue, typeFromId, field.field.typeOfFieldId, types)
+                const innerConnections = this.iterateThroughFields(objFrom, fieldValue, typeFromId, field.typeOfFieldId, types)
                                         .filter(connection => connections.findIndex(el => el.firstFieldId === connection.firstFieldId) === -1);
                 if (innerConnections) {
                     connections.push(...innerConnections);
@@ -48,22 +48,22 @@ export class ConnectionsGeneratorService {
         return connections;
     }
 
-    private findConnection(valueToFind: any, objFrom: any, typeFromId: number, types: TypeDefinition[]): FieldOfType {
+    private findConnection(valueToFind: any, objFrom: any, typeFromId: number, types: TypeDefinition[]): FieldDefinition {
         const typeFrom = types.find(el => el.id === typeFromId);
         for (const field of typeFrom.fields) {
-            let fieldValue = objFrom[field.field.name];
+            let fieldValue = objFrom[field.name];
             if (fieldValue === undefined || fieldValue === null) {
                 continue;
             }
-            if (field.field.isArray && fieldValue.length > 0) {
+            if (field.isArray && fieldValue.length > 0) {
                 fieldValue = fieldValue[0];
             }
-            if (this.typeHelper.isBasicType(types.find(el => el.id === field.field.typeOfFieldId).name)) {
+            if (this.typeHelper.isBasicType(types.find(el => el.id === field.typeOfFieldId).name)) {
                 if (fieldValue === valueToFind) {
                     return field;
                 }
             } else {
-                const connField = this.findConnection(valueToFind, fieldValue, field.field.typeOfFieldId, types);
+                const connField = this.findConnection(valueToFind, fieldValue, field.typeOfFieldId, types);
                 if (connField) {
                     return connField;
                 }

@@ -1,14 +1,18 @@
-import { SystemConnection } from './system-connection';
+
+import { TypeDefinition } from './type-definition';
+import { ConnectionFieldDefinition } from './connection-field-definition';
 
 export class SystemBase {
   id: string;
   name: string;
+  url: string;
   transpherType: TranspherType;
   dataType: DataType;
-  connections: SystemConnection[];
+  typeDefinitions: TypeDefinition[];
+  connectionFields: ConnectionFieldDefinition[];
 }
 
-enum TranspherType {
+export enum TranspherType {
   FTP,
   API,
 }

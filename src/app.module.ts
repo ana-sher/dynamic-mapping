@@ -14,11 +14,20 @@ import { XmlReaderService } from './mapping/read-data-services/xml-reader/xml-re
 import { ParseDataController } from './mapping/controllers/parse-data.controller';
 import { WriteDataController } from './mapping/controllers/write-data.controller';
 import { MapDataController } from './mapping/controllers/map-data.controller';
+import { FetchDataController } from './mapping/controllers/fetch-data.controller';
+import { ApiService } from './mapping/fetch-data-services/api/api.service';
+import { FtpService } from './mapping/fetch-data-services/ftp/ftp.service';
 
 @Module({
   imports: [HttpModule],
-  controllers: [AppController, TypeGeneratorController, ConnectionsGeneratorController, ParseDataController, WriteDataController, MapDataController],
-  providers: [AppService, TypeGeneratorService, TypeHelperService, MapDataService, ConnectionsGeneratorService,
-  JsonWriterService, JsonReaderService, XmlWriterService, XmlReaderService],
+  controllers: [AppController, TypeGeneratorController, ConnectionsGeneratorController,
+    FetchDataController,
+    ParseDataController, WriteDataController, MapDataController],
+  providers: [
+    AppService, TypeGeneratorService, TypeHelperService,
+    MapDataService, ConnectionsGeneratorService,
+    JsonWriterService, JsonReaderService, XmlWriterService,
+    XmlReaderService, ApiService, FtpService,
+  ],
 })
 export class AppModule { }

@@ -2,6 +2,7 @@ import { MapDataService } from './map-data.service';
 import { TypeDefinition } from './../../dto/type-definition';
 import { FieldConnection } from './../../dto/field-connection';
 import { TypeHelperService } from './../../../helpers/type-helper/type-helper.service';
+import { FieldDefinition } from '../../dto/field-definition';
 
 describe('MapDataService', () => {
     let mapDataService: MapDataService;
@@ -14,10 +15,10 @@ describe('MapDataService', () => {
 
     describe('map', () => {
         it('should return mapped object', async () => {
-            const result = [{
+            const result = {
                 F8: 'F4',
                 F5: [{ F6: 'F1', F7: 'F2' }],
-            }];
+            };
 
             const objFrom = {
                 F1: 'F1',
@@ -32,33 +33,22 @@ describe('MapDataService', () => {
                     {
                         id: 1,
                         typeId: 1,
-                        fieldId: 1,
-                        field: {
-                            id: 1,
-                            name: 'F1',
-                            typeOfFieldId: 10,
-                        },
+
+                        name: 'F1',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 2,
                         typeId: 1,
-                        fieldId: 2,
-                        field: {
-                            id: 2,
-                            name: 'F2',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F2',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 3,
                         typeId: 1,
-                        fieldId: 3,
-                        field: {
-                            id: 3,
-                            name: 'F3',
-                            typeOfFieldId: 3,
-                            isArray: true,
-                        },
+                        name: 'F3',
+                        typeOfFieldId: 3,
+                        isArray: true,
                     },
                 ],
             } as TypeDefinition;
@@ -70,23 +60,15 @@ describe('MapDataService', () => {
                     {
                         id: 8,
                         typeId: 2,
-                        fieldId: 8,
-                        field: {
-                            id: 8,
-                            name: 'F8',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F8',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 5,
                         typeId: 2,
-                        fieldId: 5,
-                        field: {
-                            id: 5,
-                            name: 'F5',
-                            typeOfFieldId: 4,
-                            isArray: true,
-                        },
+                        name: 'F5',
+                        typeOfFieldId: 4,
+                        isArray: true,
                     },
                 ],
             } as TypeDefinition;
@@ -98,12 +80,8 @@ describe('MapDataService', () => {
                     {
                         id: 4,
                         typeId: 3,
-                        fieldId: 4,
-                        field: {
-                            id: 4,
-                            name: 'F4',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F4',
+                        typeOfFieldId: 10,
                     },
                 ],
             } as TypeDefinition;
@@ -120,22 +98,14 @@ describe('MapDataService', () => {
                     {
                         id: 6,
                         typeId: 4,
-                        fieldId: 6,
-                        field: {
-                            id: 6,
-                            name: 'F6',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F6',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 7,
                         typeId: 4,
-                        fieldId: 7,
-                        field: {
-                            id: 7,
-                            name: 'F7',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F7',
+                        typeOfFieldId: 10,
                     },
                 ],
             } as TypeDefinition;
@@ -145,22 +115,22 @@ describe('MapDataService', () => {
                 {
                     id: 1,
                     firstFieldId: 1,
-                    firstField: T1.fields.find(el => el.fieldId === 1),
-                    secondField: T4.fields.find(el => el.fieldId === 6),
+                    firstField: T1.fields.find(el => el.id === 1),
+                    secondField: T4.fields.find(el => el.id === 6),
                     secondFieldId: 6,
                 } as FieldConnection,
                 {
                     id: 2,
                     firstFieldId: 2,
-                    firstField: T1.fields.find(el => el.fieldId === 2),
-                    secondField: T4.fields.find(el => el.fieldId === 7),
+                    firstField: T1.fields.find(el => el.id === 2),
+                    secondField: T4.fields.find(el => el.id === 7),
                     secondFieldId: 7,
                 } as FieldConnection,
                 {
                     id: 3,
                     firstFieldId: 4,
-                    firstField: T3.fields.find(el => el.fieldId === 4),
-                    secondField: T2.fields.find(el => el.fieldId === 8),
+                    firstField: T3.fields.find(el => el.id === 4),
+                    secondField: T2.fields.find(el => el.id === 8),
                     secondFieldId: 8,
                 } as FieldConnection,
             ];
@@ -185,22 +155,14 @@ describe('MapDataService', () => {
                     {
                         id: 1,
                         typeId: 1,
-                        fieldId: 1,
-                        field: {
-                            id: 1,
-                            name: 'F1',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F1',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 2,
                         typeId: 1,
-                        fieldId: 2,
-                        field: {
-                            id: 2,
-                            name: 'F2',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F2',
+                        typeOfFieldId: 10,
                     },
                 ],
             } as TypeDefinition;
@@ -212,22 +174,18 @@ describe('MapDataService', () => {
                     {
                         id: 8,
                         typeId: 2,
-                        fieldId: 8,
-                        field: {
-                            id: 8,
-                            name: 'F8',
-                            typeOfFieldId: 10,
-                        },
+
+                        name: 'F8',
+                        typeOfFieldId: 10,
+
                     },
                     {
                         id: 5,
                         typeId: 2,
-                        fieldId: 5,
-                        field: {
-                            id: 5,
-                            name: 'F5',
-                            typeOfFieldId: 10,
-                        },
+
+                        name: 'F5',
+                        typeOfFieldId: 10,
+
                     },
                 ],
             } as TypeDefinition;
@@ -242,15 +200,15 @@ describe('MapDataService', () => {
                 {
                     id: 1,
                     firstFieldId: 1,
-                    firstField: T1.fields.find(el => el.fieldId === 1),
-                    secondField: T2.fields.find(el => el.fieldId === 8),
+                    firstField: T1.fields.find(el => el.id === 1),
+                    secondField: T2.fields.find(el => el.id === 8),
                     secondFieldId: 8,
                 } as FieldConnection,
                 {
                     id: 2,
                     firstFieldId: 2,
-                    firstField: T1.fields.find(el => el.fieldId === 2),
-                    secondField: T2.fields.find(el => el.fieldId === 5),
+                    firstField: T1.fields.find(el => el.id === 2),
+                    secondField: T2.fields.find(el => el.id === 5),
                     secondFieldId: 5,
                 } as FieldConnection,
             ];
@@ -275,22 +233,15 @@ describe('MapDataService', () => {
                     {
                         id: 1,
                         typeId: 1,
-                        fieldId: 1,
-                        field: {
-                            id: 1,
-                            name: 'F1',
-                            typeOfFieldId: 10,
-                        },
+
+                        name: 'F1',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 2,
                         typeId: 1,
-                        fieldId: 2,
-                        field: {
-                            id: 2,
-                            name: 'F2',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F2',
+                        typeOfFieldId: 10,
                     },
                 ],
             } as TypeDefinition;
@@ -302,22 +253,14 @@ describe('MapDataService', () => {
                     {
                         id: 8,
                         typeId: 2,
-                        fieldId: 8,
-                        field: {
-                            id: 8,
-                            name: 'F8',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F8',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 5,
                         typeId: 2,
-                        fieldId: 5,
-                        field: {
-                            id: 5,
-                            name: 'F5',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F5',
+                        typeOfFieldId: 10,
                     },
                 ],
             } as TypeDefinition;
@@ -332,15 +275,15 @@ describe('MapDataService', () => {
                 {
                     id: 1,
                     firstFieldId: 2,
-                    firstField: T1.fields.find(el => el.fieldId === 2),
-                    secondField: T2.fields.find(el => el.fieldId === 8),
+                    firstField: T1.fields.find(el => el.id === 2),
+                    secondField: T2.fields.find(el => el.id === 8),
                     secondFieldId: 8,
                 } as FieldConnection,
                 {
                     id: 2,
                     firstFieldId: 2,
-                    firstField: T1.fields.find(el => el.fieldId === 2),
-                    secondField: T2.fields.find(el => el.fieldId === 5),
+                    firstField: T1.fields.find(el => el.id === 2),
+                    secondField: T2.fields.find(el => el.id === 5),
                     secondFieldId: 5,
                 } as FieldConnection,
             ];
@@ -365,23 +308,15 @@ describe('MapDataService', () => {
                     {
                         id: 1,
                         typeId: 1,
-                        fieldId: 1,
-                        field: {
-                            id: 1,
-                            name: 'F1',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F1',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 3,
                         typeId: 1,
-                        fieldId: 3,
-                        field: {
-                            id: 3,
-                            name: 'F3',
-                            typeOfFieldId: 3,
-                            isArray: true,
-                        },
+                        name: 'F3',
+                        typeOfFieldId: 3,
+                        isArray: true,
                     },
                 ],
             } as TypeDefinition;
@@ -393,23 +328,15 @@ describe('MapDataService', () => {
                     {
                         id: 8,
                         typeId: 2,
-                        fieldId: 8,
-                        field: {
-                            id: 8,
-                            name: 'F8',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F8',
+                        typeOfFieldId: 10,
                     },
                     {
                         id: 9,
                         typeId: 2,
-                        fieldId: 9,
-                        field: {
-                            id: 9,
-                            name: 'F9',
-                            typeOfFieldId: 4,
-                            isArray: true,
-                        },
+                        name: 'F9',
+                        typeOfFieldId: 4,
+                        isArray: true,
                     },
                 ],
             } as TypeDefinition;
@@ -421,12 +348,8 @@ describe('MapDataService', () => {
                     {
                         id: 2,
                         typeId: 3,
-                        fieldId: 2,
-                        field: {
-                            id: 2,
-                            name: 'F2',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F2',
+                        typeOfFieldId: 10,
                     }],
             } as TypeDefinition;
 
@@ -437,12 +360,8 @@ describe('MapDataService', () => {
                     {
                         id: 5,
                         typeId: 4,
-                        fieldId: 5,
-                        field: {
-                            id: 5,
-                            name: 'F5',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F5',
+                        typeOfFieldId: 10,
                     }],
             } as TypeDefinition;
 
@@ -456,15 +375,15 @@ describe('MapDataService', () => {
                 {
                     id: 1,
                     firstFieldId: 1,
-                    firstField: T1.fields.find(el => el.fieldId === 1),
-                    secondField: T2.fields.find(el => el.fieldId === 8),
+                    firstField: T1.fields.find(el => el.id === 1),
+                    secondField: T2.fields.find(el => el.id === 8),
                     secondFieldId: 8,
                 } as FieldConnection,
                 {
                     id: 2,
                     firstFieldId: 2,
-                    firstField: T3.fields.find(el => el.fieldId === 2),
-                    secondField: T4.fields.find(el => el.fieldId === 5),
+                    firstField: T3.fields.find(el => el.id === 2),
+                    secondField: T4.fields.find(el => el.id === 5),
                     secondFieldId: 5,
                 } as FieldConnection,
             ];
@@ -488,12 +407,8 @@ describe('MapDataService', () => {
                     {
                         id: 1,
                         typeId: 1,
-                        fieldId: 1,
-                        field: {
-                            id: 1,
-                            name: 'F1',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F1',
+                        typeOfFieldId: 10,
                     },
                 ],
             } as TypeDefinition;
@@ -505,13 +420,9 @@ describe('MapDataService', () => {
                     {
                         id: 9,
                         typeId: 2,
-                        fieldId: 9,
-                        field: {
-                            id: 9,
-                            name: 'F9',
-                            typeOfFieldId: 4,
-                            isArray: true,
-                        },
+                        name: 'F9',
+                        typeOfFieldId: 4,
+                        isArray: true,
                     },
                 ],
             } as TypeDefinition;
@@ -523,12 +434,8 @@ describe('MapDataService', () => {
                     {
                         id: 5,
                         typeId: 4,
-                        fieldId: 5,
-                        field: {
-                            id: 5,
-                            name: 'F5',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F5',
+                        typeOfFieldId: 10,
                     }],
             } as TypeDefinition;
 
@@ -542,8 +449,8 @@ describe('MapDataService', () => {
                 {
                     id: 1,
                     firstFieldId: 1,
-                    firstField: T1.fields.find(el => el.fieldId === 1),
-                    secondField: T4.fields.find(el => el.fieldId === 5),
+                    firstField: T1.fields.find(el => el.id === 1),
+                    secondField: T4.fields.find(el => el.id === 5),
                     secondFieldId: 5,
                 } as FieldConnection,
             ];
@@ -567,12 +474,8 @@ describe('MapDataService', () => {
                     {
                         id: 1,
                         typeId: 1,
-                        fieldId: 1,
-                        field: {
-                            id: 1,
-                            name: 'F1',
-                            typeOfFieldId: 3,
-                        },
+                        name: 'F1',
+                        typeOfFieldId: 3,
                     },
                 ],
             } as TypeDefinition;
@@ -584,12 +487,8 @@ describe('MapDataService', () => {
                     {
                         id: 9,
                         typeId: 2,
-                        fieldId: 9,
-                        field: {
-                            id: 9,
-                            name: 'F9',
-                            typeOfFieldId: 4,
-                        },
+                        name: 'F9',
+                        typeOfFieldId: 4,
                     },
                 ],
             } as TypeDefinition;
@@ -601,12 +500,8 @@ describe('MapDataService', () => {
                     {
                         id: 5,
                         typeId: 4,
-                        fieldId: 5,
-                        field: {
-                            id: 5,
-                            name: 'F5',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F5',
+                        typeOfFieldId: 10,
                     }],
             } as TypeDefinition;
 
@@ -617,12 +512,8 @@ describe('MapDataService', () => {
                     {
                         id: 2,
                         typeId: 3,
-                        fieldId: 2,
-                        field: {
-                            id: 2,
-                            name: 'F2',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F2',
+                        typeOfFieldId: 10,
                     }],
             } as TypeDefinition;
 
@@ -636,8 +527,8 @@ describe('MapDataService', () => {
                 {
                     id: 1,
                     firstFieldId: 2,
-                    firstField: T3.fields.find(el => el.fieldId === 2),
-                    secondField: T4.fields.find(el => el.fieldId === 5),
+                    firstField: T3.fields.find(el => el.id === 2),
+                    secondField: T4.fields.find(el => el.id === 5),
                     secondFieldId: 5,
                 } as FieldConnection,
             ];
@@ -661,12 +552,8 @@ describe('MapDataService', () => {
                     {
                         id: 1,
                         typeId: 1,
-                        fieldId: 1,
-                        field: {
-                            id: 1,
-                            name: 'F1',
-                            typeOfFieldId: 3,
-                        },
+                        name: 'F1',
+                        typeOfFieldId: 3,
                     },
                 ],
             } as TypeDefinition;
@@ -678,16 +565,11 @@ describe('MapDataService', () => {
                     {
                         id: 5,
                         typeId: 2,
-                        fieldId: 5,
-                        field: {
-                            id: 5,
-                            name: 'F5',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F5',
+                        typeOfFieldId: 10,
                     },
                 ],
             } as TypeDefinition;
-
 
             const T3: TypeDefinition = {
                 id: 3,
@@ -696,12 +578,8 @@ describe('MapDataService', () => {
                     {
                         id: 2,
                         typeId: 3,
-                        fieldId: 2,
-                        field: {
-                            id: 2,
-                            name: 'F2',
-                            typeOfFieldId: 10,
-                        },
+                        name: 'F2',
+                        typeOfFieldId: 10,
                     }],
             } as TypeDefinition;
 
@@ -715,8 +593,8 @@ describe('MapDataService', () => {
                 {
                     id: 1,
                     firstFieldId: 2,
-                    firstField: T3.fields.find(el => el.fieldId === 2),
-                    secondField: T2.fields.find(el => el.fieldId === 5),
+                    firstField: T3.fields.find(el => el.id === 2),
+                    secondField: T2.fields.find(el => el.id === 5),
                     secondFieldId: 5,
                 } as FieldConnection,
             ];
