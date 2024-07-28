@@ -1,4 +1,4 @@
-import { FieldDefinition } from './field-definition';
+import { FieldDefinition } from './field-definition.dto';
 
 export class Setting {
   id: string;

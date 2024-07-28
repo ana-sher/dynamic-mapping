@@ -1,4 +1,4 @@
-import { FetchType } from './fetch-type';
+import { FetchType } from './fetch-type.dto';
 
 export class FetchSimpleField {
     id: string;

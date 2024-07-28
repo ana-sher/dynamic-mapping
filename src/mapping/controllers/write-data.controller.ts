@@ -1,8 +1,9 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { IWriter } from '../write-data-services/writer';
-import { DataType } from '../dto/system-base';
+import { DataType } from '../dto/system-base.dto';
 import { JsonWriterService } from '../write-data-services/json-writer/json-writer.service';
 import { XmlWriterService } from '../write-data-services/xml-writer/xml-writer.service';
+import { WriteDataDto } from '../dto/controller-dto/write-data.dto';
 
 @Controller('write-data')
 export class WriteDataController {
@@ -14,7 +15,7 @@ export class WriteDataController {
         }
 
     @Post()
-    write(@Body() req: { data: any, type?: DataType }) {
+    write(@Body() req: WriteDataDto) {
         if (!req.type) {
             req.type = DataType.Json;
         }

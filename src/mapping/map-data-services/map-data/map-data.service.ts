@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { FieldConnection } from './../../dto/field-connection';
-import { TypeDefinition } from './../../dto/type-definition';
-import { TypesDict } from './../../dto/types-dict';
-import { FieldDefinition } from './../../dto/field-definition';
+import { FieldConnection } from '../../dto/field-connection.dto';
+import { TypeDefinition } from '../../dto/type-definition.dto';
+import { TypesDict } from '../../dto/types-dict.dto';
+import { FieldDefinition } from '../../dto/field-definition.dto';
 import { TypeHelperService } from './../../../helpers/type-helper/type-helper.service';
 
 @Injectable()

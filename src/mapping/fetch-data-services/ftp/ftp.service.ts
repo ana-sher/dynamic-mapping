@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IFetcher } from '../fetcher';
-import { FetchType, Action } from '../../dto/fetch-type';
+import { FetchType, Action } from '../../dto/fetch-type.dto';
 import { Observable, from } from 'rxjs';
 import { Client, AccessOptions } from 'basic-ftp';
-import { FetchSimpleField } from '../../dto/header-field';
+import { FetchSimpleField } from '../../dto/header-field.dto';
 import { Writable, Transform, Readable } from 'stream';
 
 @Injectable()

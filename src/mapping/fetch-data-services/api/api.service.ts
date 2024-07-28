@@ -1,10 +1,11 @@
-import { Injectable, HttpService } from '@nestjs/common';
-import { FetchType, Action } from '../../dto/fetch-type';
-import { AxiosResponse, AxiosRequestConfig } from 'axios';
+import { HttpService } from '@nestjs/axios';
+import { FetchType, Action } from '../../dto/fetch-type.dto';
 import { Observable } from 'rxjs';
-import { FetchSimpleField } from '../../dto/header-field';
+import { FetchSimpleField } from '../../dto/header-field.dto';
 import { map } from 'rxjs/operators';
 import { IFetcher } from '../fetcher';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ApiService implements IFetcher {
@@ -20,9 +21,9 @@ export class ApiService implements IFetcher {
 
     constructor(private readonly httpService: HttpService) { }
 
-    public doRequest(fetchType: FetchType, fethData: any = {}): Observable<any> {
+    public doRequest(fetchType: FetchType, fetchData: any = {}): Observable<any> {
         return this.actionsDictionary[fetchType.action]
-            (this.getConfig(fetchType.path, fetchType.queryParams, fetchType.headerParams, fethData))
+            (this.getConfig(fetchType.path, fetchType.queryParams, fetchType.headerParams, fetchData))
             .pipe(map(el => el.data));
     }
 

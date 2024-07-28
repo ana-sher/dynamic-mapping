@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TypeDefinition } from './../../mapping/dto/type-definition';
-import { FieldConnection } from './../../mapping/dto/field-connection';
+import { TypeDefinition } from '../../mapping/dto/type-definition.dto';
+import { FieldConnection } from '../../mapping/dto/field-connection.dto';
 import { TypeHelperService } from './../../helpers/type-helper/type-helper.service';
-import { FieldDefinition } from '../../mapping/dto/field-definition';
+import { FieldDefinition } from '../../mapping/dto/field-definition.dto';
 
 @Injectable()
 export class ConnectionsGeneratorService {

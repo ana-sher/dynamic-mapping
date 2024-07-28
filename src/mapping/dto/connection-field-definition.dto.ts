@@ -1,7 +1,7 @@
-import { SystemBase } from './system-base';
-import { ConnectionValue } from './connection-value';
+import { SystemBase } from './system-base.dto';
+import { ConnectionValue } from './connection-value.dto';
 
-export interface ConnectionFieldDefinition {
+export class ConnectionFieldDefinition {
   id: number;
   name: string;
   role: FieldTransferRole;

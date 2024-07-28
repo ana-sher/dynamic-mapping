@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConnectionsGeneratorService } from './connections-generator.service';
 import { TypeHelperService } from './../../helpers/type-helper/type-helper.service';
-import { TypeDefinition } from './../../mapping/dto/type-definition';
-import { FieldConnection } from './../../mapping/dto/field-connection';
+import { TypeDefinition } from '../../mapping/dto/type-definition.dto';
+import { FieldConnection } from '../../mapping/dto/field-connection.dto';
 
 describe('ConnectionsGeneratorService', () => {
   let service: ConnectionsGeneratorService;

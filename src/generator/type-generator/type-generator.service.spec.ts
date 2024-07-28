@@ -1,7 +1,7 @@
 import { TypeGeneratorService } from './type-generator.service';
-import { TypeDefinition } from './../../mapping/dto/type-definition';
+import { TypeDefinition } from '../../mapping/dto/type-definition.dto';
 import { TypeHelperService } from './../../helpers/type-helper/type-helper.service';
-import { FieldDefinition } from './../../mapping/dto/field-definition';
+import { FieldDefinition } from '../../mapping/dto/field-definition.dto';
 
 describe('TypeGeneratorService', () => {
   let service: TypeGeneratorService;

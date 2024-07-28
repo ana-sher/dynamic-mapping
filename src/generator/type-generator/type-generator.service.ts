@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TypeHelperService } from './../../helpers/type-helper/type-helper.service';
-import { TypeDefinition } from './../../mapping/dto/type-definition';
-import { FieldDefinition } from './../../mapping/dto/field-definition';
+import { TypeDefinition } from '../../mapping/dto/type-definition.dto';
+import { FieldDefinition } from '../../mapping/dto/field-definition.dto';
 
 @Injectable()
 export class TypeGeneratorService {

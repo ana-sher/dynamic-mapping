@@ -1,6 +1,5 @@
-import { FetchField } from './fetch-field';
-import { TypeDefinition } from './type-definition';
-import { FetchSimpleField } from './header-field';
+import { TypeDefinition } from './type-definition.dto';
+import { FetchSimpleField } from './header-field.dto';
 
 export class FetchType {
   id: string;

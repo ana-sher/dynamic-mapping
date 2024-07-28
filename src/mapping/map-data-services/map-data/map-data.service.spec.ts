@@ -1,8 +1,8 @@
 import { MapDataService } from './map-data.service';
-import { TypeDefinition } from './../../dto/type-definition';
-import { FieldConnection } from './../../dto/field-connection';
+import { TypeDefinition } from '../../dto/type-definition.dto';
+import { FieldConnection } from '../../dto/field-connection.dto';
 import { TypeHelperService } from './../../../helpers/type-helper/type-helper.service';
-import { FieldDefinition } from '../../dto/field-definition';
+import { FieldDefinition } from '../../dto/field-definition.dto';
 
 describe('MapDataService', () => {
     let mapDataService: MapDataService;

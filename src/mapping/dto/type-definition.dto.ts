@@ -1,5 +1,5 @@
-import { SystemBase } from './system-base';
-import { FieldDefinition } from './field-definition';
+import { SystemBase } from './system-base.dto';
+import { FieldDefinition } from './field-definition.dto';
 
 export class TypeDefinition {
   id: number;

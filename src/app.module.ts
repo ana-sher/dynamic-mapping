@@ -1,5 +1,4 @@
-import { Module, HttpModule } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { HttpModule } from '@nestjs/axios';
 import { AppService } from './app.service';
 import { TypeGeneratorController } from './generator/type-generator/type-generator.controller';
 import { TypeGeneratorService } from './generator/type-generator/type-generator.service';
@@ -18,16 +17,31 @@ import { FetchDataController } from './mapping/controllers/fetch-data.controller
 import { ApiService } from './mapping/fetch-data-services/api/api.service';
 import { FtpService } from './mapping/fetch-data-services/ftp/ftp.service';
 
+import { Module } from '@nestjs/common';
+
 @Module({
-  imports: [HttpModule],
-  controllers: [AppController, TypeGeneratorController, ConnectionsGeneratorController,
+  imports: [HttpModule,
+  ],
+  controllers: [
+    TypeGeneratorController,
+    ConnectionsGeneratorController,
     FetchDataController,
-    ParseDataController, WriteDataController, MapDataController],
+    ParseDataController,
+    WriteDataController,
+    MapDataController,
+  ],
   providers: [
-    AppService, TypeGeneratorService, TypeHelperService,
-    MapDataService, ConnectionsGeneratorService,
-    JsonWriterService, JsonReaderService, XmlWriterService,
-    XmlReaderService, ApiService, FtpService,
+    AppService,
+    TypeGeneratorService,
+    TypeHelperService,
+    MapDataService,
+    ConnectionsGeneratorService,
+    JsonWriterService,
+    JsonReaderService,
+    XmlWriterService,
+    XmlReaderService,
+    ApiService,
+    FtpService,
   ],
 })
-export class AppModule { }
+export class AppModule {}

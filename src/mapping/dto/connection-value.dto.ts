@@ -1,5 +1,4 @@
-import { FieldDefinition } from './field-definition';
-import { ConnectionFieldDefinition } from './connection-field-definition';
+import { ConnectionFieldDefinition } from './connection-field-definition.dto';
 
 export class ConnectionValue {
   id: number;
